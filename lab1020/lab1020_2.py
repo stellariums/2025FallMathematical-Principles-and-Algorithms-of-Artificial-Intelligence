@@ -1,5 +1,7 @@
 def secret(n,inputstr):
     num=len(inputstr)
+    if n<-15:
+        return "Error input"
     change=[chr(ord(i)+n) for i in inputstr]
     return change
 
