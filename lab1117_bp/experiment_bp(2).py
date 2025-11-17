@@ -139,13 +139,13 @@ class ReluNeuralNetwork:
         '''
         TODO: 前向传播:第二隐藏层激活 a_2 的计算 [需要补全 None 代表部分的代码] 
         '''  
-        self.z_2 = None
-        self.a_2 = None
+        self.z_2 = self.a_1 @ self.weights_2 + self.bias_2
+        self.a_2 = relu(self.z_2)
         
         '''
         TODO: 前向传播:输出层 y_pred 的计算 [需要补全 None 代表部分的代码] 
         '''  
-        self.z_3 = None
+        self.z_3 = self.a_2 @ self.weights_3 + self.bias_3
         self.y_pred = softmax(self.z_3)
 
         return self.y_pred
@@ -167,10 +167,10 @@ class ReluNeuralNetwork:
          [需要补全 None 代表部分的代码] 
         '''
         # 计算误差项 e_2
-        e_2 = None
+        e_2 = (e_3 @ self.weights_3.T) * relu_derivative(self.z_2)
         # self.weights_2, self.bias_2 参数梯度的计算
-        grad_weights_2 = None
-        grad_bias_2 = None
+        grad_weights_2 = self.a_1.T @ e_2 / batch_size
+        grad_bias_2 = np.sum(e_2, axis=0, keepdims=True) / batch_size
 
         
         '''
@@ -178,18 +178,18 @@ class ReluNeuralNetwork:
          [需要补全 None 代表部分的代码] 
         '''
         # 计算误差项 e_1
-        e_1 = None
+        e_1 = (e_2 @ self.weights_2.T) * relu_derivative(self.z_1)
         # self.weights_1, self.bias_1 参数梯度的计算
-        grad_weights_1 = None
-        grad_bias_1 = None
+        grad_weights_1 = X.T @ e_1 / batch_size
+        grad_bias_1 = np.sum(e_1, axis=0, keepdims=True) / batch_size
         # 梯度下降，更新网络参数
 
         self.weights_3 -= grad_weights_3 * learning_rate
         self.bias_3 -= bias_weights_3 * learning_rate
-        self.weights_2 -= None
-        self.bias_2 -= None
-        self.weights_1 -= None
-        self.bias_1 -= None
+        self.weights_2 -= grad_weights_2 * learning_rate
+        self.bias_2 -= grad_bias_2 * learning_rate
+        self.weights_1 -= grad_weights_1 * learning_rate
+        self.bias_1 -= grad_bias_1 * learning_rate
 
 
     def train(self, X, y, epochs, learning_rate):
@@ -230,20 +230,20 @@ class LinearNeuralNetwork:
         '''
         TODO: 前向传播:第一隐藏层激活 a_1 的计算 [需要补全 None 代表部分的代码] 
         '''
-        self.z_1 = None
-        self.a_1 = None
+        self.z_1 = X @ self.weights_1 + self.bias_1
+        self.a_1 = self.z_1
         
         '''
         TODO: 前向传播:第二隐藏层激活 a_2 的计算 [需要补全 None 代表部分的代码] 
         '''  
-        self.z_2 = None
-        self.a_2 = None
+        self.z_2 = self.a_1 @ self.weights_2 + self.bias_2
+        self.a_2 = self.z_2
         
         '''
         TODO: 前向传播:输出层 y_pred 的计算 [需要补全 None 代表部分的代码] 
         '''  
-        self.z_3 = None
-        self.y_pred = None
+        self.z_3 = self.a_2 @ self.weights_3 + self.bias_3
+        self.y_pred = softmax(self.z_3)
 
         return self.y_pred
     
@@ -254,10 +254,10 @@ class LinearNeuralNetwork:
          [需要补全 None 代表部分的代码] 
         '''
         # 计算误差项 e_3
-        e_3 = None
+        e_3 = y_pred - y
         # self.weights_3, self.bias_3 参数梯度的计算
-        grad_weights_3 = None
-        bias_weights_3 = None
+        grad_weights_3 = self.a_2.T @ e_3 / batch_size
+        bias_weights_3 = np.sum(e_3, axis=0, keepdims=True) / batch_size
 
 
         '''
@@ -265,10 +265,10 @@ class LinearNeuralNetwork:
          [需要补全 None 代表部分的代码] 
         '''
         # 计算误差项 e_2
-        e_2 = None
+        e_2 = e_3 @ self.weights_3.T
         # self.weights_2, self.bias_2 参数梯度的计算
-        grad_weights_2 = None
-        grad_bias_2 = None
+        grad_weights_2 = self.a_1.T @ e_2 / batch_size
+        grad_bias_2 = np.sum(e_2, axis=0, keepdims=True) / batch_size
 
         
         '''
@@ -276,18 +276,18 @@ class LinearNeuralNetwork:
          [需要补全 None 代表部分的代码] 
         '''
         # 计算误差项 e_1
-        e_1 = None
+        e_1 = e_2 @ self.weights_2.T
         # self.weights_1, self.bias_1 参数梯度的计算
-        grad_weights_1 = None
-        grad_bias_1 = None
+        grad_weights_1 = X.T @ e_1 / batch_size
+        grad_bias_1 = np.sum(e_1, axis=0, keepdims=True) / batch_size
 
         # 梯度下降，更新网络参数
-        self.weights_3 -= None
-        self.bias_3 -= None
-        self.weights_2 -= None
-        self.bias_2 -= None
-        self.weights_1 -= None
-        self.bias_1 -= None
+        self.weights_3 -= grad_weights_3 * learning_rate
+        self.bias_3 -= bias_weights_3 * learning_rate
+        self.weights_2 -= grad_weights_2 * learning_rate
+        self.bias_2 -= grad_bias_2 * learning_rate
+        self.weights_1 -= grad_weights_1 * learning_rate
+        self.bias_1 -= grad_bias_1 * learning_rate
 
 
     def train(self, X, y, epochs, learning_rate):
